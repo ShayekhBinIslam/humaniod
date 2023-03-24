@@ -64,6 +64,10 @@ class Fatima (Robot):
             'TurnLeft180': Motion('../motions/TurnLeft180.motion'),
             'TurnLeft60': Motion('../motions/TurnLeft60.motion'),
             'TurnRight60': Motion('../motions/TurnRight60.motion'),
+            'TurnLeft20': Motion('../motions/TurnLeft20.motion'),
+            'TurnRight20': Motion('../motions/TurnRight20.motion'),
+            'TurnRight40': Motion('../motions/TurnRight40.motion'),
+            'TurnLeft40': Motion('../motions/TurnLeft40.motion'),
             'TaiChi': Motion('../motions/TaiChi.motion'),
             'TaiChi_fast': Motion('../motions/TaiChi_fast.motion'),
             'Shoot': Motion('../motions/Shoot.motion'),
@@ -127,18 +131,43 @@ class Fatima (Robot):
                     running = t + 2.6
                     print(t, 'Backwards')
                     continue
-                # elif l_bad:
-                #     self.current_motion.set(self.motions['SideStepLeft'])
+                elif r_bad:
+                    # self.current_motion.set(self.motions['SideStepLeft'])
                 #     # running = t + 1.536
                 #     running = t + 4.92
                 #     print(t, 'SideStepLeft')
-                #     continue
-                # elif r_bad:
+                    # Turn left 60
+                    # self.current_motion.set(self.motions['TurnLeft60'])
+                    # running = t + 4.52
+                    # print(t, 'TurnLeft60')
+                    # Turn left 20
+                    # self.current_motion.set(self.motions['TurnLeft20'])
+                    # running = t + 0.852
+                    # print(t, 'TurnLeft20')
+                    # Turn left 40
+                    self.current_motion.set(self.motions['TurnLeft40'])
+                    running = t + 2.880
+                    print(t, 'TurnLeft40')
+
+                    continue
+                elif l_bad:
                 #     self.current_motion.set(self.motions['SideStepRight'])
                 #     # running = t + 1.536
                 #     running = t + 5.76
                 #     print(t, 'SideStepRight')
-                #     continue
+                    # Turn right 60
+                    # self.current_motion.set(self.motions['TurnRight60'])
+                    # running = t + 4.52
+                    # print(t, 'TurnRight60')
+                    # Turn right 20
+                    # self.current_motion.set(self.motions['TurnRight20'])
+                    # running = t + 0.852
+                    # print(t, 'TurnRight20')
+                    # Turn right 40
+                    self.current_motion.set(self.motions['TurnRight40'])
+                    running = t + 0.2272
+                    print(t, 'TurnRight40')
+                    continue
 
                 test = np.random.uniform()
                 # if test > 0.99:
