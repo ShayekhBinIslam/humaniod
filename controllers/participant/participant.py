@@ -88,7 +88,8 @@ class Fatima (Robot):
         desired_radius = (self.SMALLEST_TURNING_RADIUS / normalized_x) \
                 if abs(normalized_x) > 1e-3 else None
         self.gait_manager.command_to_motors(
-            desired_radius=desired_radius, heading_angle=0)
+            # desired_radius=desired_radius, heading_angle=0)
+            desired_radius=desired_radius, heading_angle=self.heading_angle)
         if self.attack_counter == 0:
             self.gait_manager.punch()
         self.attack_counter += 1
