@@ -88,11 +88,11 @@ class Fatima (Robot):
                 #     self.current_motion.set(self.motions['TaiChi_fast'])
                 #     running = t + 1.3
                 # elif test > 0.98:
-                if test > 0.995:
+                if test > 0.997:
                     print(t, "Shoot start")
                     self.current_motion.set(self.motions['Shoot'])
                     running = t + 4.8
-                elif test > 0.994:
+                elif test > 0.995:
                     print(t, "TurnLeft180 start")
                     self.current_motion.set(self.motions['TurnLeft180'])
                     running = t + 9.0
