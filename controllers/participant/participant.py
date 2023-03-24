@@ -42,10 +42,11 @@ class Fatima (Robot):
             # We need to update the internal theta value of the gait manager at every step:
             t = self.getTime()
             self.gait_manager.update_theta()
+            self.fall_detector.check()
             if 0.3 < t < 2:
                 self.start_sequence()
             elif t > 2:
-                self.fall_detector.check()
+                # self.fall_detector.check()
                 if not self.opponent_detected:
                     self.detect_opponent()
                 if self.opponent_detected:
