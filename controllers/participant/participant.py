@@ -194,24 +194,25 @@ class Fatima (Robot):
         # elif test > 0.98:
         # if test > 0.997:
         if test > 0.999:
-          print(t, "Shoot start")
-          self.current_motion.set(self.motions['Shoot'])
-          self.running = t + 4.8
-        # elif test > 0.995:
-        elif test > 0.998:
+          # print(t, "Shoot start")
+          # self.current_motion.set(self.motions['Shoot'])
+          # self.running = t + 4.8
+          pass
+        elif test > 0.995:
+        # elif test > 0.998:
           # print(t, "TurnLeft180 start")
           # self.current_motion.set(self.motions['TurnLeft180'])
           # self.running = t + 9.0
           print(t, "TurnLeft60 start")
           self.current_motion.set(self.motions['TurnLeft60'])
           self.running = t + 4.52
-        # elif test > 0.993:
-        elif test > 0.997:
+        elif test > 0.993:
+        # elif test > 0.997:
           print(t, "TurnRight start")
           self.current_motion.set(self.motions['TurnRight60'])
           self.running = t + 4.52
-        # elif test > 0.990:
-        elif test > 0.996:
+        elif test > 0.990:
+        # elif test > 0.996:
           print(t, 'Forward start')
           self.current_motion.set(self.motions['Forwards'])
           self.running = t + 2.6
