@@ -1,21 +1,32 @@
-# Copyright 1996-2023 Cyberbotics Ltd.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Humanoid Robot Wrestling Controller Example
 
-"""
+[![webots.cloud - Competition](https://img.shields.io/badge/webots.cloud-Competition-007ACC)][1]
+
+## Fatima controller
+
 Demonstrates the gait manager (inverse kinematics + simple ellipsoid path).
-"""
 
+This controller needs Numpy, OpenCV, Scipy and AHRS therefore the [Dockerfile](controllers/Dockerfile#L1-L12) needs to be updated:
+
+```Dockerfile
+FROM cyberbotics/webots.cloud:R2023a-ubuntu20.04-numpy
+
+# Additional dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip3 install --upgrade pip && \
+    pip3 install --no-cache-dir \
+    opencv-python \
+    scipy \
+    ahrs
+```
+
+Beats [Eve](https://github.com/cyberbotics/wrestling-eve) by having a higher coverage.
+
+Here is the [participant.py](./controllers/participant/participant.py) file:
+
+``` Python
 from controller import Robot
 import sys
 sys.path.append('..')
@@ -58,7 +69,7 @@ class Fatima (Robot):
         self.gait_manager.command_to_motors(heading_angle=0)
 
     def walk(self):
-        """Walk towards the opponent like a homing missile."""
+        """Dodge the opponent robot by taking side steps."""
         normalized_x = self._get_normalized_opponent_x()
         # We set the desired radius such that the robot walks towards the opponent.
         # If the opponent is close to the middle, the robot walks straight.
@@ -82,3 +93,8 @@ class Fatima (Robot):
 # create the Robot instance and run main loop
 wrestler = Fatima()
 wrestler.run()
+```
+
+<!-- [Grace](https://github.com/cyberbotics/wrestling-grace) is a more advanced robot controller able to win against Fatima. -->
+
+[1]: https://webots.cloud/run?version=R2022b&url=https%3A%2F%2Fgithub.com%2Fcyberbotics%2Fwrestling%2Fblob%2Fmain%2Fworlds%2Fwrestling.wbt&type=competition "Leaderboard"
