@@ -55,11 +55,15 @@ class Fatima (Robot):
         self.counter = 0
         # load motion files
         self.motions = {
-            'SideStepLeft': Motion('../motions/SideStepLeftLoop.motion'),
-            'SideStepRight': Motion('../motions/SideStepRightLoop.motion'),
+            'SideStepLeftLoop': Motion('../motions/SideStepLeftLoop.motion'),
+            'SideStepRightLoop': Motion('../motions/SideStepRightLoop.motion'),
+            'SideStepLeft': Motion('../motions/SideStepLeft.motion'),
+            'SideStepRight': Motion('../motions/SideStepRight.motion'),
             'TurnRight': Motion('../motions/TurnRight20.motion'),
             'TurnLeft': Motion('../motions/TurnLeft20.motion'),
             'TurnLeft180': Motion('../motions/TurnLeft180.motion'),
+            'TurnLeft60': Motion('../motions/TurnLeft60.motion'),
+            'TurnRight60': Motion('../motions/TurnRight60.motion'),
             'TaiChi': Motion('../motions/TaiChi.motion'),
             'TaiChi_fast': Motion('../motions/TaiChi_fast.motion'),
             'Shoot': Motion('../motions/Shoot.motion'),
@@ -74,7 +78,10 @@ class Fatima (Robot):
             t = self.getTime()
             self.gait_manager.update_theta()
 
+            # Imgage analysis start
             # if 1:
+            threshold = 0.02
+            # threshold = .3
             img = self.camera.get_image()
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             l, w = img.shape   
@@ -84,11 +91,20 @@ class Fatima (Robot):
             white_px = img.sum()
             total_px = np.prod(img.shape)
             ratio = white_px / total_px
-            threshold = 0.05
-            # threshold = .3
 
-                # cv2.imwrite(f'img/{t}.png', img)
-                # print(os.getcwd())
+            left_img = img[:, :int(w/2)]
+            right_img = img[:, int(w/2):]
+            left_white_px = left_img.sum()
+            right_white_px = right_img.sum()
+            left_ratio = left_white_px / np.prod(left_img.shape)
+            right_ratio = right_white_px / np.prod(right_img.shape)
+
+            l_bad = left_ratio < threshold
+            r_bad = right_ratio < threshold
+
+            # cv2.imwrite(f'img/{t}.png', img)
+            # print(os.getcwd())
+            # Imgage analysis ends
         
             if 0.3 < t < 2:
                 self.start_sequence()
@@ -104,11 +120,24 @@ class Fatima (Robot):
                     running = 0
                     self.walk()
                 
-                if ratio < threshold:
+                # if ratio < threshold:
+                if l_bad and r_bad:
                     self.current_motion.set(self.motions['Backwards'])
                     running = t + 2.6
                     print(t, 'Backwards')
                     continue
+                # elif l_bad:
+                #     self.current_motion.set(self.motions['SideStepLeft'])
+                #     # running = t + 1.536
+                #     running = t + 4.92
+                #     print(t, 'SideStepLeft')
+                #     continue
+                # elif r_bad:
+                #     self.current_motion.set(self.motions['SideStepRight'])
+                #     # running = t + 1.536
+                #     running = t + 5.76
+                #     print(t, 'SideStepRight')
+                #     continue
 
                 test = np.random.uniform()
                 # if test > 0.99:
@@ -121,9 +150,16 @@ class Fatima (Robot):
                     self.current_motion.set(self.motions['Shoot'])
                     running = t + 4.8
                 elif test > 0.995:
-                    print(t, "TurnLeft180 start")
-                    self.current_motion.set(self.motions['TurnLeft180'])
-                    running = t + 9.0
+                    # print(t, "TurnLeft180 start")
+                    # self.current_motion.set(self.motions['TurnLeft180'])
+                    # running = t + 9.0
+                    print(t, "TurnLeft60 start")
+                    self.current_motion.set(self.motions['TurnLeft60'])
+                    running = t + 4.52
+                elif test > 0.993:
+                    print(t, "TurnRight start")
+                    self.current_motion.set(self.motions['TurnRight60'])
+                    running = t + 4.52
                 
     def start_sequence(self):
         """At the beginning of the match, the robot walks forwards to move away from the edges."""
