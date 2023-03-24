@@ -25,6 +25,12 @@ from utils.fall_detection import FallDetection
 from utils.gait_manager import GaitManager
 from utils.camera import Camera
 
+'''
+Progress:
+1. Fatima added
+2. docker updated
+'''
+
 
 class Fatima (Robot):
     SMALLEST_TURNING_RADIUS = 0.1
