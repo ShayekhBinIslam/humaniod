@@ -26,6 +26,8 @@ from utils.gait_manager import GaitManager
 from utils.camera import Camera
 from utils.current_motion_manager import CurrentMotionManager
 import numpy as np
+import cv2
+import os
 
 '''
 Progress:
@@ -61,7 +63,9 @@ class Fatima (Robot):
             'TaiChi': Motion('../motions/TaiChi.motion'),
             'TaiChi_fast': Motion('../motions/TaiChi_fast.motion'),
             'Shoot': Motion('../motions/Shoot.motion'),
+            'Backwards': Motion('../motions/Backwards.motion'),
         }
+
 
     def run(self):
         running = 0
@@ -69,6 +73,23 @@ class Fatima (Robot):
             # We need to update the internal theta value of the gait manager at every step:
             t = self.getTime()
             self.gait_manager.update_theta()
+
+            # if 1:
+            img = self.camera.get_image()
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            l, w = img.shape   
+            img[0:int(l*0.75), :] = 0
+            img[img < 180] = 0
+            img[img >= 180] = 1
+            white_px = img.sum()
+            total_px = np.prod(img.shape)
+            ratio = white_px / total_px
+            threshold = 0.05
+            # threshold = .3
+
+                # cv2.imwrite(f'img/{t}.png', img)
+                # print(os.getcwd())
+        
             if 0.3 < t < 2:
                 self.start_sequence()
                 self.init_motion = self.current_motion.get()
@@ -82,6 +103,13 @@ class Fatima (Robot):
                     print(t, "Motion end")
                     running = 0
                     self.walk()
+                
+                if ratio < threshold:
+                    self.current_motion.set(self.motions['Backwards'])
+                    running = t + 2.6
+                    print(t, 'Backwards')
+                    continue
+
                 test = np.random.uniform()
                 # if test > 0.99:
                 #     print(t, "TaiChi start")
