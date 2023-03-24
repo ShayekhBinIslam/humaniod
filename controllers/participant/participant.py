@@ -172,7 +172,7 @@ class Fatima (Robot):
                     print(t, 'TurnRight40')
                     continue
                 
-                '''
+                
                 test = np.random.uniform()
                 # if test > 0.99:
                 #     print(t, "TaiChi start")
@@ -198,7 +198,7 @@ class Fatima (Robot):
                     print(t, 'Forward start')
                     self.current_motion.set(self.motions['Forwards'])
                     running = t + 2.6
-                '''
+                
                 
     def start_sequence(self):
         """At the beginning of the match, the robot walks forwards to move away from the edges."""
