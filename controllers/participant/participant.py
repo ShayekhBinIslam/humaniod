@@ -43,9 +43,10 @@ class Fatima (Robot):
             t = self.getTime()
             self.gait_manager.update_theta()
             # self.fall_detector.check()
-            if 0.3 < t < 2:
-                self.start_sequence()
-            elif t > 2:
+            # if 0.3 < t < 2:
+                # self.start_sequence()
+            # elif t > 2:
+            if 1:
                 self.fall_detector.check()
                 if not self.opponent_detected:
                     self.detect_opponent()
@@ -88,8 +89,8 @@ class Fatima (Robot):
         desired_radius = (self.SMALLEST_TURNING_RADIUS / normalized_x) \
                 if abs(normalized_x) > 1e-3 else None
         self.gait_manager.command_to_motors(
-            # desired_radius=desired_radius, heading_angle=0)
-            desired_radius=desired_radius, heading_angle=self.heading_angle)
+            desired_radius=desired_radius, heading_angle=0)
+            # desired_radius=desired_radius, heading_angle=self.heading_angle)
         if self.attack_counter == 0:
             self.gait_manager.punch()
         self.attack_counter += 1
