@@ -72,15 +72,15 @@ class Fatima (Robot):
         #     self.heading_angle = - self.heading_angle
         #     self.counter = 0
 
-        # if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
-        #     self.heading_angle = - self.heading_angle
-        #     self.counter = 0
-        # self.counter += 1
-        if abs(normalized_x) > self.SAFE_ZONE:
-            if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
-                self.heading_angle = - self.heading_angle
-                self.counter = 0
-            self.counter += 1
+        if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
+            self.heading_angle = - self.heading_angle
+            self.counter = 0
+        self.counter += 1
+        # if abs(normalized_x) > self.SAFE_ZONE:
+        #     if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
+        #         self.heading_angle = - self.heading_angle
+        #         self.counter = 0
+        #     self.counter += 1
 
 
         self.gait_manager.command_to_motors(desired_radius=desired_radius, heading_angle=self.heading_angle)
