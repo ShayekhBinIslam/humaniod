@@ -47,6 +47,7 @@ class Fatima (Robot):
         self.time_step = int(self.getBasicTimeStep())
 
         self.camera = Camera(self)
+        self.camera2 = Camera(self, 'CameraBottom')
         self.fall_detector = FallDetection(self.time_step, self)
         self.gait_manager = GaitManager(self, self.time_step)
         self.current_motion = CurrentMotionManager()
@@ -86,8 +87,9 @@ class Fatima (Robot):
             # Imgage analysis start
             # if 1:
             threshold = 0.02
-            # threshold = .3
+            # threshold = 0.3
             img = self.camera.get_image()
+            # img = self.camera2.get_image()
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             l, w = img.shape   
             img[0:int(l*0.75), :] = 0
@@ -122,7 +124,7 @@ class Fatima (Robot):
                 if t < running:
                     continue
                 else: 
-                    print(t, "Motion end")
+                    if running != 0: print(t, "Motion end")
                     running = 0
                     self.walk()
                 
@@ -169,7 +171,8 @@ class Fatima (Robot):
                     running = t + 0.2272
                     print(t, 'TurnRight40')
                     continue
-
+                
+                '''
                 test = np.random.uniform()
                 # if test > 0.99:
                 #     print(t, "TaiChi start")
@@ -195,24 +198,29 @@ class Fatima (Robot):
                     print(t, 'Forward start')
                     self.current_motion.set(self.motions['Forwards'])
                     running = t + 2.6
+                '''
                 
     def start_sequence(self):
         """At the beginning of the match, the robot walks forwards to move away from the edges."""
         self.gait_manager.command_to_motors(heading_angle=0)
 
     def walk(self):
+        print('Walking')
         """Walk towards the opponent like a homing missile."""
         normalized_x = self._get_normalized_opponent_x()
         # We set the desired radius such that the robot walks towards the opponent.
         # If the opponent is close to the middle, the robot walks straight.
         desired_radius = (self.SMALLEST_TURNING_RADIUS / normalized_x) if abs(normalized_x) > 1e-3 else None
         # TODO: position estimation so that if the robot is close to the edge, it switches dodging direction
-        if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
-            self.heading_angle = - self.heading_angle
-            self.counter = 0
-        self.counter += 1
+        # if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
+        #     self.heading_angle = - self.heading_angle
+        #     self.counter = 0
+        # self.counter += 1
         
-        self.gait_manager.command_to_motors(desired_radius=desired_radius, heading_angle=self.heading_angle)
+        self.gait_manager.command_to_motors(desired_radius=desired_radius, 
+            # heading_angle=self.heading_angle
+            heading_angle=0
+        )
 
     def _get_normalized_opponent_x(self):
         """Locate the opponent in the image and return its horizontal position in the range [-1, 1]."""
