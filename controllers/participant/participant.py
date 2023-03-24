@@ -67,15 +67,22 @@ class Fatima (Robot):
         desired_radius = (self.SMALLEST_TURNING_RADIUS / normalized_x) if abs(normalized_x) > 1e-3 else None
         # TODO: position estimation so that if the robot is close to the edge, it switches dodging direction
         # Get the robot's current position from the GPS sensor
-        x, _, _ = self.gps.getValues()
-        if abs(x) >= self.SAFE_ZONE:
-            self.heading_angle = - self.heading_angle
-            self.counter = 0
+        # x, _, _ = self.gps.getValues()
+        # if abs(x) >= self.SAFE_ZONE:
+        #     self.heading_angle = - self.heading_angle
+        #     self.counter = 0
 
-        if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
-            self.heading_angle = - self.heading_angle
-            self.counter = 0
-        self.counter += 1
+        # if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
+        #     self.heading_angle = - self.heading_angle
+        #     self.counter = 0
+        # self.counter += 1
+        if abs(normalized_x) > self.SAFE_ZONE:
+            if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
+                self.heading_angle = - self.heading_angle
+                self.counter = 0
+            self.counter += 1
+
+
         self.gait_manager.command_to_motors(desired_radius=desired_radius, heading_angle=self.heading_angle)
 
     def _get_normalized_opponent_x(self):
