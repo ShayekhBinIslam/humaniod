@@ -42,7 +42,7 @@ class Fatima (Robot):
         # Time before changing direction to stop the robot from falling off the ring
         self.counter = 0
         self.gps = self.getDevice('gps')
-        self.gps.enable(10000)
+        self.gps.enable(5)
 
     def run(self):
         while self.step(self.time_step) != -1:
