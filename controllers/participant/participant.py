@@ -78,7 +78,7 @@ class Fatima (Robot):
 
 
     def run(self):
-        running = 0
+        self.running = 0
         while self.step(self.time_step) != -1:
             # We need to update the internal theta value of the gait manager at every step:
             t = self.getTime()
@@ -121,54 +121,54 @@ class Fatima (Robot):
             # if 1:
                 self.fall_detector.check()
 
-                if t < running:
+                if t < self.running:
                     continue
                 else: 
-                    if running != 0: print(t, "Motion end")
-                    running = 0
-                    self.walk()
+                    if self.running != 0: print(t, "Motion end")
+                    self.running = 0
+                    self.walk(t)
                 
                 # if ratio < threshold:
                 if l_bad and r_bad:
                     self.current_motion.set(self.motions['Backwards'])
-                    running = t + 2.6
+                    self.running = t + 2.6
                     print(t, 'Backwards')
                     continue
                 elif r_bad:
                     # self.current_motion.set(self.motions['SideStepLeft'])
-                #     # running = t + 1.536
-                #     running = t + 4.92
+                #     # self.running = t + 1.536
+                #     self.running = t + 4.92
                 #     print(t, 'SideStepLeft')
                     # Turn left 60
                     # self.current_motion.set(self.motions['TurnLeft60'])
-                    # running = t + 4.52
+                    # self.running = t + 4.52
                     # print(t, 'TurnLeft60')
                     # Turn left 20
                     # self.current_motion.set(self.motions['TurnLeft20'])
-                    # running = t + 0.852
+                    # self.running = t + 0.852
                     # print(t, 'TurnLeft20')
                     # Turn left 40
                     self.current_motion.set(self.motions['TurnLeft40'])
-                    running = t + 2.880
+                    self.running = t + 2.880
                     print(t, 'TurnLeft40')
 
                     continue
                 elif l_bad:
                 #     self.current_motion.set(self.motions['SideStepRight'])
-                #     # running = t + 1.536
-                #     running = t + 5.76
+                #     # self.running = t + 1.536
+                #     self.running = t + 5.76
                 #     print(t, 'SideStepRight')
                     # Turn right 60
                     # self.current_motion.set(self.motions['TurnRight60'])
-                    # running = t + 4.52
+                    # self.running = t + 4.52
                     # print(t, 'TurnRight60')
                     # Turn right 20
                     # self.current_motion.set(self.motions['TurnRight20'])
-                    # running = t + 0.852
+                    # self.running = t + 0.852
                     # print(t, 'TurnRight20')
                     # Turn right 40
                     self.current_motion.set(self.motions['TurnRight40'])
-                    running = t + 0.2272
+                    self.running = t + 0.2272
                     print(t, 'TurnRight40')
                     continue
                 
@@ -177,37 +177,40 @@ class Fatima (Robot):
                 # if test > 0.99:
                 #     print(t, "TaiChi start")
                 #     self.current_motion.set(self.motions['TaiChi_fast'])
-                #     running = t + 1.3
+                #     self.running = t + 1.3
                 # elif test > 0.98:
-                if test > 0.997:
+                # if test > 0.997:
+                if test > 0.999:
                     print(t, "Shoot start")
                     self.current_motion.set(self.motions['Shoot'])
-                    running = t + 4.8
-                elif test > 0.995:
+                    self.running = t + 4.8
+                # elif test > 0.995:
+                elif test > 0.998:
                     # print(t, "TurnLeft180 start")
                     # self.current_motion.set(self.motions['TurnLeft180'])
-                    # running = t + 9.0
+                    # self.running = t + 9.0
                     print(t, "TurnLeft60 start")
                     self.current_motion.set(self.motions['TurnLeft60'])
-                    running = t + 4.52
-                elif test > 0.993:
+                    self.running = t + 4.52
+                # elif test > 0.993:
+                elif test > 0.997:
                     print(t, "TurnRight start")
                     self.current_motion.set(self.motions['TurnRight60'])
-                    running = t + 4.52
-                elif test > 0.990:
+                    self.running = t + 4.52
+                # elif test > 0.990:
+                elif test > 0.996:
                     print(t, 'Forward start')
                     self.current_motion.set(self.motions['Forwards'])
-                    running = t + 2.6
+                    self.running = t + 2.6
                 
                 
     def start_sequence(self):
         """At the beginning of the match, the robot walks forwards to move away from the edges."""
         self.gait_manager.command_to_motors(heading_angle=0)
 
-    def walk(self):
-        print('Walking')
+    def walk(self, t):
         """Walk towards the opponent like a homing missile."""
-        normalized_x = self._get_normalized_opponent_x()
+        contour_area, normalized_x = self._get_normalized_opponent_x()
         # We set the desired radius such that the robot walks towards the opponent.
         # If the opponent is close to the middle, the robot walks straight.
         desired_radius = (self.SMALLEST_TURNING_RADIUS / normalized_x) if abs(normalized_x) > 1e-3 else None
@@ -216,6 +219,13 @@ class Fatima (Robot):
         #     self.heading_angle = - self.heading_angle
         #     self.counter = 0
         # self.counter += 1
+
+        print('Walking', contour_area)
+        if contour_area <= 100 and np.random.uniform() > 0.99:
+            # print(t, "Shoot start")
+            self.current_motion.set(self.motions['Shoot'])
+            self.running = t + 4.8
+
         
         self.gait_manager.command_to_motors(desired_radius=desired_radius, 
             # heading_angle=self.heading_angle
@@ -225,10 +235,15 @@ class Fatima (Robot):
     def _get_normalized_opponent_x(self):
         """Locate the opponent in the image and return its horizontal position in the range [-1, 1]."""
         img = self.camera.get_image()
-        _, _, horizontal_coordinate = IP.locate_opponent(img)
+        contour, _, horizontal_coordinate = IP.locate_opponent(img)
+        try:
+            contour_area = cv2.contourArea(contour)
+        except:
+            contour_area = 1000
+            
         if horizontal_coordinate is None:
-            return 0
-        return horizontal_coordinate * 2 / img.shape[1] - 1
+            return contour_area, 0
+        return contour_area, horizontal_coordinate * 2 / img.shape[1] - 1
 
 
 # create the Robot instance and run main loop
