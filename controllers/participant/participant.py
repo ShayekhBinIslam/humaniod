@@ -42,11 +42,11 @@ class Fatima (Robot):
             # We need to update the internal theta value of the gait manager at every step:
             t = self.getTime()
             self.gait_manager.update_theta()
-            self.fall_detector.check()
+            # self.fall_detector.check()
             if 0.3 < t < 2:
                 self.start_sequence()
             elif t > 2:
-                # self.fall_detector.check()
+                self.fall_detector.check()
                 if not self.opponent_detected:
                     self.detect_opponent()
                 if self.opponent_detected:
@@ -74,16 +74,21 @@ class Fatima (Robot):
         if abs(normalized_x) < self.ATTACK_DISTANCE_THRESHOLD:
             self.attacking = True
         else:
+            desired_radius = (self.SMALLEST_TURNING_RADIUS / normalized_x) \
+                if abs(normalized_x) > 1e-3 else None
             if self.counter > self.TIME_BEFORE_DIRECTION_CHANGE:
                 self.heading_angle = - self.heading_angle
                 self.counter = 0
             self.counter += 1
-            self.gait_manager.command_to_motors(desired_radius=self.SMALLEST_TURNING_RADIUS / normalized_x, heading_angle=self.heading_angle)
+            self.gait_manager.command_to_motors(desired_radius=desired_radius, heading_angle=self.heading_angle)
 
     def attack(self):
         """Attack the opponent by moving towards it and performing a punch."""
         normalized_x = self._get_normalized_opponent_x()
-        self.gait_manager.command_to_motors(desired_radius=self.SMALLEST_TURNING_RADIUS / normalized_x, heading_angle=0)
+        desired_radius = (self.SMALLEST_TURNING_RADIUS / normalized_x) \
+                if abs(normalized_x) > 1e-3 else None
+        self.gait_manager.command_to_motors(
+            desired_radius=desired_radius, heading_angle=0)
         if self.attack_counter == 0:
             self.gait_manager.punch()
         self.attack_counter += 1
