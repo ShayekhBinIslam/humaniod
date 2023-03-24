@@ -68,6 +68,7 @@ class Fatima (Robot):
             'TaiChi_fast': Motion('../motions/TaiChi_fast.motion'),
             'Shoot': Motion('../motions/Shoot.motion'),
             'Backwards': Motion('../motions/Backwards.motion'),
+            'Forwards': Motion('../motions/Forwards.motion'),
         }
 
 
@@ -160,6 +161,10 @@ class Fatima (Robot):
                     print(t, "TurnRight start")
                     self.current_motion.set(self.motions['TurnRight60'])
                     running = t + 4.52
+                elif test > 0.990:
+                    print(t, 'Forward start')
+                    self.current_motion.set(self.motions['Forwards'])
+                    running = t + 2.6
                 
     def start_sequence(self):
         """At the beginning of the match, the robot walks forwards to move away from the edges."""
