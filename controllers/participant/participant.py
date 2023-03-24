@@ -111,7 +111,8 @@ class Fatima (Robot):
             # print(os.getcwd())
             # Imgage analysis ends
         
-            if 0.3 < t < 2:
+            # if 0.3 < t < 2:
+            if 0.3 < t < 2.3:
                 self.start_sequence()
                 self.init_motion = self.current_motion.get()
             elif t > 2:
