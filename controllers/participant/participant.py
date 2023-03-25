@@ -89,6 +89,9 @@ class Fatima (Robot):
     bw_tr = False
     # print(dir(self))
     # print(self.devices)
+    enemy_img1, enemy_img2 = None, None
+    enemy_found = False
+    enemy_find_count = 0
     while self.step(self.time_step) != -1:
       # We need to update the internal theta value of the gait manager at every step:
       t = self.getTime()
@@ -146,7 +149,7 @@ class Fatima (Robot):
         # sonar_bad = (sonar_right_val < 0.30)
         sonar_bad = False
         if (l_bad and r_bad) or sonar_bad:
-          if sonar_bad: print("Too near !!!")
+          # if sonar_bad: print("Too near !!!")
           self.current_motion.set(self.motions['Backwards'])
           self.running = t + 2.6
           print(t, 'Backwards')
@@ -171,13 +174,46 @@ class Fatima (Robot):
 
         else:
         # if 1:
-          print('Forwards start')
-          # tr = self.motions['Forwards']
-          tr = self.motions['ForwardLoop']
-          # tr = self.motions['ForwardLoop_fast']
-          # tr = self.motions['ForwardLoop_fast2']
-          self.current_motion.set(tr[0])
-          self.running = t + tr[1]
+          
+          # Search moving objects
+          start_time = 120
+          # start_time = 0
+          if t > start_time and (not enemy_found and enemy_find_count < 15):
+            if enemy_img1 is None:
+              enemy_img1 = self.camera.get_image()
+            elif enemy_img2 is None:
+              enemy_img2 = self.camera.get_image()
+            else:
+              # After getting 2.6 roaming points, attack
+                diff_thresh = 1_400_000
+                frame_diff = np.sum(np.abs(enemy_img1 - enemy_img2))
+                enemy_img1, enemy_img2 = None, None
+                # print('diff', frame_diff)
+                enemy_img1, enemy_img2 = None, None
+                print('Turn left to find enemy')
+                tr = self.motions['TurnLeft20']
+                self.current_motion.set(tr[0])
+                self.running = t + tr[1]
+                enemy_find_count += 1
+                if frame_diff > diff_thresh:
+                  enemy_found = True
+                  print('Enemy found')
+          else:
+            # '''
+            print('Forwards start')
+            # tr = self.motions['Forwards']
+            tr = self.motions['ForwardLoop']
+            # tr = self.motions['ForwardLoop_fast']
+            # tr = self.motions['ForwardLoop_fast2']
+            self.current_motion.set(tr[0])
+            self.running = t + tr[1]
+            # '''
+
+
+            
+
+
+
           # fw_cnt += 1
           # if fw_cnt == 10:
           #   print('TurnLeft20 start')
