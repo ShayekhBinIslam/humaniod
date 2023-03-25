@@ -76,12 +76,13 @@ class Fatima (Robot):
       'Forwards': (Motion('../motions/Forwards.motion'), 2.60),
       'ForwardLoop': (Motion('../motions/ForwardLoop.motion'), 0.960),
       'ForwardLoop_fast': (Motion('../motions/ForwardLoop_fast.motion'), 0.480 + 0.2),
+      # 'ForwardLoop_fast2': (Motion('../motions/ForwardLoop_fast2.motion'), 0.240 + 0.2),
     }
 
 
   def run(self):
-    self.sonar = self.getDevice('Sonar/Right')
-    self.sonar.enable(100000)
+    # self.sonar = self.getDevice('Sonar/Right')
+    # self.sonar.enable(100000)
     self.running = 0
     init_tr = 0
     fw_cnt = 0
@@ -114,10 +115,8 @@ class Fatima (Robot):
       l_bad = left_ratio < threshold
       r_bad = right_ratio < threshold
 
-      sonar_right_val = self.sonar.getValue()
+      # sonar_right_val = self.sonar.getValue()
       # print("Sonar right:", sonar_right_val)
-
-      
     
       # if 0.3 < t < 2:
       if 0.3 < t < 2.3:
@@ -144,7 +143,8 @@ class Fatima (Robot):
           print(t, 'TurnLeft40')
           continue
 
-        sonar_bad = (sonar_right_val < 0.30)
+        # sonar_bad = (sonar_right_val < 0.30)
+        sonar_bad = False
         if (l_bad and r_bad) or sonar_bad:
           if sonar_bad: print("Too near !!!")
           self.current_motion.set(self.motions['Backwards'])
@@ -175,6 +175,7 @@ class Fatima (Robot):
           # tr = self.motions['Forwards']
           # tr = self.motions['ForwardLoop']
           tr = self.motions['ForwardLoop_fast']
+          # tr = self.motions['ForwardLoop_fast2']
           self.current_motion.set(tr[0])
           self.running = t + tr[1]
           # fw_cnt += 1
