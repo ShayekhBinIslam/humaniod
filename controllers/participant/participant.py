@@ -119,8 +119,8 @@ class Fatima (Robot):
 
       
     
-      if 0.3 < t < 2:
-      # if 0.3 < t < 2.3:
+      # if 0.3 < t < 2:
+      if 0.3 < t < 2.3:
         self.start_sequence()
         pass
       elif t > 2:
