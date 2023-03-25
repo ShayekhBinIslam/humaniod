@@ -78,6 +78,8 @@ class Fatima (Robot):
 
 
   def run(self):
+    self.sonar = self.getDevice('Sonar/Right')
+    self.sonar.enable(100000)
     self.running = 0
     init_tr = 0
     fw_cnt = 0
@@ -110,6 +112,9 @@ class Fatima (Robot):
       l_bad = left_ratio < threshold
       r_bad = right_ratio < threshold
 
+      sonar_right_val = self.sonar.getValue()
+      # print("Sonar right:", sonar_right_val)
+
       
     
       # if 0.3 < t < 2:
@@ -137,8 +142,9 @@ class Fatima (Robot):
           print(t, 'TurnLeft40')
           continue
 
-    
-        if l_bad and r_bad:
+        sonar_bad = (sonar_right_val < 0.26)
+        if (l_bad and r_bad) or sonar_bad:
+          if sonar_bad: print("Too near !!!")
           self.current_motion.set(self.motions['Backwards'])
           self.running = t + 2.6
           print(t, 'Backwards')
