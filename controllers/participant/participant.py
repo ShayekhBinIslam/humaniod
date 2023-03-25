@@ -118,11 +118,11 @@ class Fatima (Robot):
       # sonar_right_val = self.sonar.getValue()
       # print("Sonar right:", sonar_right_val)
     
-      # if 0.3 < t < 2:
-      if 0.3 < t < 2.3:
+      cutoff = 2.3 # 2
+      if 0.3 < t < cutoff:
         self.start_sequence()
         pass
-      elif t > 2:
+      elif t > cutoff:
       # if 1:
         self.fall_detector.check()
 
@@ -173,8 +173,8 @@ class Fatima (Robot):
         # if 1:
           print('Forwards start')
           # tr = self.motions['Forwards']
-          # tr = self.motions['ForwardLoop']
-          tr = self.motions['ForwardLoop_fast']
+          tr = self.motions['ForwardLoop']
+          # tr = self.motions['ForwardLoop_fast']
           # tr = self.motions['ForwardLoop_fast2']
           self.current_motion.set(tr[0])
           self.running = t + tr[1]
