@@ -74,6 +74,8 @@ class Fatima (Robot):
       'Shoot': Motion('../motions/Shoot.motion'),
       'Backwards': Motion('../motions/Backwards.motion'),
       'Forwards': (Motion('../motions/Forwards.motion'), 2.60),
+      'ForwardLoop': (Motion('../motions/ForwardLoop.motion'), 0.960),
+      'ForwardLoop_fast': (Motion('../motions/ForwardLoop_fast.motion'), 0.480 + 0.2),
     }
 
 
@@ -142,7 +144,7 @@ class Fatima (Robot):
           print(t, 'TurnLeft40')
           continue
 
-        sonar_bad = (sonar_right_val < 0.26)
+        sonar_bad = (sonar_right_val < 0.30)
         if (l_bad and r_bad) or sonar_bad:
           if sonar_bad: print("Too near !!!")
           self.current_motion.set(self.motions['Backwards'])
@@ -170,7 +172,9 @@ class Fatima (Robot):
         else:
         # if 1:
           print('Forwards start')
-          tr = self.motions['Forwards']
+          # tr = self.motions['Forwards']
+          # tr = self.motions['ForwardLoop']
+          tr = self.motions['ForwardLoop_fast']
           self.current_motion.set(tr[0])
           self.running = t + tr[1]
           # fw_cnt += 1
