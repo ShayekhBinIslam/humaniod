@@ -63,56 +63,45 @@ class Fatima (Robot):
       'TurnRight': Motion('../motions/TurnRight20.motion'),
       'TurnLeft': Motion('../motions/TurnLeft20.motion'),
       'TurnLeft180': Motion('../motions/TurnLeft180.motion'),
-      'TurnLeft60': Motion('../motions/TurnLeft60.motion'),
+      'TurnLeft60': (Motion('../motions/TurnLeft60.motion'), 4.52),
       'TurnRight60': Motion('../motions/TurnRight60.motion'),
-      'TurnLeft20': Motion('../motions/TurnLeft20.motion'),
-      'TurnRight20': Motion('../motions/TurnRight20.motion'),
+      'TurnLeft20': (Motion('../motions/TurnLeft20.motion'), 0.852),
+      'TurnRight20': (Motion('../motions/TurnRight20.motion'), 0.852),
       'TurnRight40': Motion('../motions/TurnRight40.motion'),
       'TurnLeft40': Motion('../motions/TurnLeft40.motion'),
       'TaiChi': Motion('../motions/TaiChi.motion'),
       'TaiChi_fast': Motion('../motions/TaiChi_fast.motion'),
       'Shoot': Motion('../motions/Shoot.motion'),
       'Backwards': Motion('../motions/Backwards.motion'),
-      'Forwards': Motion('../motions/Forwards.motion'),
+      'Forwards': (Motion('../motions/Forwards.motion'), 2.60),
     }
 
 
   def run(self):
     self.running = 0
+    init_tr = 0
+    fw_cnt = 0
+    bw_tr = False
+    # print(dir(self))
+    # print(self.devices)
     while self.step(self.time_step) != -1:
       # We need to update the internal theta value of the gait manager at every step:
       t = self.getTime()
       self.gait_manager.update_theta()
 
-      # Imgage analysis start
-      # if 1:
-      threshold = 0.02
-      threshold2 = 0.7
-      # threshold = 0.3
-      img2 = self.camera2.get_image()
-      img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-      img2[img2 < 180] = 0
-      img2[img2 >= 180] = 1
-      white_px2 = img2.sum()
-      total_px2 = np.prod(img2.shape)
-      ratio2 = white_px2 / total_px2
-      c2_bad = ratio2 < threshold2
-
-      
-
-      img = self.camera.get_image()
+      threshold = 0.05
+      img = self.camera2.get_image()
       img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-      
-      l, w = img.shape   
-      img[0:int(l*0.75), :] = 0
-      img[img < 180] = 0
-      img[img >= 180] = 1
-      white_px = img.sum()
-      total_px = np.prod(img.shape)
-      ratio = white_px / total_px
+      pix = 150
+      img[img < pix] = 0
+      img[img >= pix] = 1
+      l, w = img.shape
+      img = img[int(l*0.5):, :]
 
       left_img = img[:, :int(w/2)]
       right_img = img[:, int(w/2):]
+      cv2.imwrite('tmp.png', img*255)
+
       left_white_px = left_img.sum()
       right_white_px = right_img.sum()
       left_ratio = left_white_px / np.prod(left_img.shape)
@@ -121,14 +110,12 @@ class Fatima (Robot):
       l_bad = left_ratio < threshold
       r_bad = right_ratio < threshold
 
-      # cv2.imwrite(f'img/{t}.png', img)
-      # print(os.getcwd())
-      # Imgage analysis ends
+      
     
       # if 0.3 < t < 2:
       if 0.3 < t < 2.3:
-        self.start_sequence()
-        self.init_motion = self.current_motion.get()
+        # self.start_sequence()
+        pass
       elif t > 2:
       # if 1:
         self.fall_detector.check()
@@ -138,84 +125,67 @@ class Fatima (Robot):
         else: 
           if self.running != 0: print(t, "Motion end")
           self.running = 0
-          self.walk(t)
+          # self.walk(t)
         
-        if c2_bad:
-          # if ratio < threshold:
-          if l_bad and r_bad:
-            self.current_motion.set(self.motions['Backwards'])
-            self.running = t + 2.6
-            print(t, 'Backwards')
-            continue
-          elif r_bad:
-            # self.current_motion.set(self.motions['SideStepLeft'])
-          #     # self.running = t + 1.536
-          #     self.running = t + 4.92
-          #     print(t, 'SideStepLeft')
-            # Turn left 60
-            # self.current_motion.set(self.motions['TurnLeft60'])
-            # self.running = t + 4.52
-            # print(t, 'TurnLeft60')
-            # Turn left 20
-            # self.current_motion.set(self.motions['TurnLeft20'])
-            # self.running = t + 0.852
-            # print(t, 'TurnLeft20')
-            # Turn left 40
-            self.current_motion.set(self.motions['TurnLeft40'])
-            self.running = t + 2.880
-            print(t, 'TurnLeft40')
+        if bw_tr:
+          bw_tr = False
+          # self.current_motion.set(self.motions['TurnRight40'])
+          # self.running = t + 0.2272
+          # print(t, 'TurnRight40')
+          self.current_motion.set(self.motions['TurnLeft40'])
+          self.running = t + 2.880
+          print(t, 'TurnLeft40')
+          continue
 
-            continue
-          elif l_bad:
-          #     self.current_motion.set(self.motions['SideStepRight'])
-          #     # self.running = t + 1.536
-          #     self.running = t + 5.76
-          #     print(t, 'SideStepRight')
-            # Turn right 60
-            # self.current_motion.set(self.motions['TurnRight60'])
-            # self.running = t + 4.52
-            # print(t, 'TurnRight60')
-            # Turn right 20
-            # self.current_motion.set(self.motions['TurnRight20'])
-            # self.running = t + 0.852
-            # print(t, 'TurnRight20')
-            # Turn right 40
-            self.current_motion.set(self.motions['TurnRight40'])
-            self.running = t + 0.2272
-            print(t, 'TurnRight40')
-            continue
-        
-        
-        test = np.random.uniform()
-        # if test > 0.99:
-        #     print(t, "TaiChi start")
-        #     self.current_motion.set(self.motions['TaiChi_fast'])
-        #     self.running = t + 1.3
-        # elif test > 0.98:
-        # if test > 0.997:
-        if test > 0.999:
-          # print(t, "Shoot start")
-          # self.current_motion.set(self.motions['Shoot'])
-          # self.running = t + 4.8
-          pass
-        elif test > 0.995:
-        # elif test > 0.998:
-          # print(t, "TurnLeft180 start")
-          # self.current_motion.set(self.motions['TurnLeft180'])
-          # self.running = t + 9.0
-          print(t, "TurnLeft60 start")
-          self.current_motion.set(self.motions['TurnLeft60'])
-          self.running = t + 4.52
-        elif test > 0.993:
-        # elif test > 0.997:
-          print(t, "TurnRight start")
-          self.current_motion.set(self.motions['TurnRight60'])
-          self.running = t + 4.52
-        elif test > 0.990:
-        # elif test > 0.996:
-          print(t, 'Forward start')
-          self.current_motion.set(self.motions['Forwards'])
+    
+        if l_bad and r_bad:
+          self.current_motion.set(self.motions['Backwards'])
           self.running = t + 2.6
+          print(t, 'Backwards')
+          bw_tr = True
+          continue
+        elif r_bad:
+          self.current_motion.set(self.motions['TurnLeft40'])
+          self.running = t + 2.880
+          print(t, 'TurnLeft40')
+          continue
+        elif l_bad:
+          self.current_motion.set(self.motions['TurnRight40'])
+          self.running = t + 0.2272
+          print(t, 'TurnRight40')
+          continue
+          
+        if init_tr < 4:
+          tr = self.motions['TurnRight20']
+          self.current_motion.set(tr[0])
+          self.running = t + tr[1]
+          init_tr += 1
+
+        else:
+        # if 1:
+          print('Forwards start')
+          tr = self.motions['Forwards']
+          self.current_motion.set(tr[0])
+          self.running = t + tr[1]
+          # fw_cnt += 1
+          # if fw_cnt == 10:
+          #   print('TurnLeft20 start')
+          #   tr = self.motions['TurnLeft20']
+          #   self.current_motion.set(tr[0])
+          #   self.running = t + tr[1]
+          #   fw_cnt = 0
+
+
+        
+        # else:
+        #   tr = self.motions['TurnRight20']
+        #   self.current_motion.set(tr[0])
+        #   self.running = t + tr[1]
+        #   contour_area, normalized_x = self._get_normalized_opponent_x()
+        #   print("Contour area: ", contour_area)
+          
+          
+
         
         
   def start_sequence(self):
