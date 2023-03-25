@@ -100,7 +100,7 @@ class Fatima (Robot):
 
       left_img = img[:, :int(w/2)]
       right_img = img[:, int(w/2):]
-      cv2.imwrite('tmp.png', img*255)
+      # cv2.imwrite('tmp.png', img*255)
 
       left_white_px = left_img.sum()
       right_white_px = right_img.sum()
