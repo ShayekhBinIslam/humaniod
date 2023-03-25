@@ -92,6 +92,7 @@ class Fatima (Robot):
     enemy_img1, enemy_img2 = None, None
     enemy_found = False
     enemy_find_count = 0
+    attack_index = 0
     while self.step(self.time_step) != -1:
       # We need to update the internal theta value of the gait manager at every step:
       t = self.getTime()
@@ -176,9 +177,9 @@ class Fatima (Robot):
         # if 1:
           
           # Search moving objects
-          start_time = 120
-          # start_time = 0
-          if t > start_time and (not enemy_found and enemy_find_count < 15):
+          
+          start_times = [30, 60, 90, 120, 1000]
+          if t > start_times[attack_index] and (enemy_find_count < 15):
             if enemy_img1 is None:
               enemy_img1 = self.camera.get_image()
             elif enemy_img2 is None:
@@ -196,8 +197,9 @@ class Fatima (Robot):
                 self.running = t + tr[1]
                 enemy_find_count += 1
                 if frame_diff > diff_thresh:
-                  enemy_found = True
+                  # enemy_found = True
                   print('Enemy found')
+                  attack_index += 1
           else:
             # '''
             print('Forwards start')
