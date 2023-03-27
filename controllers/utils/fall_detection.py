@@ -50,6 +50,7 @@ class FallDetection:
             while self.fsm.current_state != 'NO_FALL':
                 # block everything and run the recovery motion until the robot is back on its feet
                 self.fsm.execute_action()
+                self.wait()
                 self.robot.step(self.time_step)
                 self.detect_fall()
 
