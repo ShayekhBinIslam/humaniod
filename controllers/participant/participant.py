@@ -79,8 +79,8 @@ class Fatima (Robot):
       'Shoot': Motion('../motions/Shoot.motion'),
       'Backwards': Motion('../motions/Backwards.motion'),
       'Forwards': (Motion('../motions/Forwards.motion'), 2.60),
-      'ForwardLoop': (Motion('../motions/ForwardLoop.motion'), 0.960),
-      'ForwardLoop_fast': (Motion('../motions/ForwardLoop_fast.motion'), 0.480 + 0.2),
+      # 'ForwardLoop': (Motion('../motions/ForwardLoop.motion'), 0.960),
+      'ForwardLoop': (Motion('../motions/ForwardLoop_fast.motion'), 0.480 + 0.2),
       # 'ForwardLoop_fast2': (Motion('../motions/ForwardLoop_fast2.motion'), 0.240 + 0.2),
     }
 
