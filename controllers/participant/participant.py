@@ -65,11 +65,16 @@ class Fatima (Robot):
       'TurnLeft180': Motion('../motions/TurnLeft180.motion'),
       'TurnLeft60': (Motion('../motions/TurnLeft60.motion'), 4.52),
       'TurnRight60': Motion('../motions/TurnRight60.motion'),
-      'TurnLeft20': (Motion('../motions/TurnLeft20.motion'), 0.852),
-      'TurnRight20': (Motion('../motions/TurnRight20.motion'), 0.852),
-      'TurnRight40': Motion('../motions/TurnRight40.motion'),
-      'TurnLeft40': Motion('../motions/TurnLeft40.motion'),
-      'TaiChi': Motion('../motions/TaiChi.motion'),
+      # 'TurnLeft20': (Motion('../motions/TurnLeft20.motion'), 0.852),
+      'TurnLeft20': (Motion('../motions/TurnLeft20_mod.motion'), 0.5),
+      # 'TurnRight20': (Motion('../motions/TurnRight20.motion'), 0.852),
+      'TurnRight20': (Motion('../motions/TurnRight20_mod.motion'), 0.5),
+      'TurnRight40': (Motion('../motions/TurnRight40.motion'), 0.2272),
+      # 'TurnRight40': (Motion('../motions/TurnRight40_mod.motion'), 0.158),
+      # 'TurnLeft40': Motion('../motions/TurnLeft40.motion'),
+      'TurnLeft40': (Motion('../motions/TurnLeft40_mod.motion'), 2.016),
+      # 'TaiChi': Motion('../motions/TaiChi.motion'),
+      'TaiChi': Motion('../motions/TaiChi_mod.motion'),
       'TaiChi_fast': Motion('../motions/TaiChi_fast.motion'),
       'Shoot': Motion('../motions/Shoot.motion'),
       'Backwards': Motion('../motions/Backwards.motion'),
@@ -137,13 +142,21 @@ class Fatima (Robot):
           self.running = 0
           # self.walk(t)
         
+        # Do tai chi
+        # tl = self.motions['TurnRight40']
+        # self.current_motion.set(tl[0])
+        # self.running = t + tl[1]
+        # print(t, 'TurnRight40')
+        # continue
+        
         if bw_tr:
           bw_tr = False
           # self.current_motion.set(self.motions['TurnRight40'])
           # self.running = t + 0.2272
           # print(t, 'TurnRight40')
-          self.current_motion.set(self.motions['TurnLeft40'])
-          self.running = t + 2.880
+          tl = self.motions['TurnLeft40']
+          self.current_motion.set(tl[0])
+          self.running = t + tl[1]
           print(t, 'TurnLeft40')
           continue
 
@@ -157,13 +170,15 @@ class Fatima (Robot):
           bw_tr = True
           continue
         elif r_bad:
-          self.current_motion.set(self.motions['TurnLeft40'])
-          self.running = t + 2.880
+          tl = self.motions['TurnLeft40']
+          self.current_motion.set(tl[0])
+          self.running = t + tl[1]
           print(t, 'TurnLeft40')
           continue
         elif l_bad:
-          self.current_motion.set(self.motions['TurnRight40'])
-          self.running = t + 0.2272
+          tl = self.motions['TurnRight40']
+          self.current_motion.set(tl[0])
+          self.running = t + tl[1]
           print(t, 'TurnRight40')
           continue
           
@@ -202,13 +217,18 @@ class Fatima (Robot):
                   attack_index += 1
           else:
             # '''
-            print('Forwards start')
-            # tr = self.motions['Forwards']
-            tr = self.motions['ForwardLoop']
-            # tr = self.motions['ForwardLoop_fast']
-            # tr = self.motions['ForwardLoop_fast2']
-            self.current_motion.set(tr[0])
-            self.running = t + tr[1]
+            if np.random.uniform() > 0.1:
+              print('Forwards start')
+              # tr = self.motions['Forwards']
+              tr = self.motions['ForwardLoop']
+              # tr = self.motions['ForwardLoop_fast']
+              # tr = self.motions['ForwardLoop_fast2']
+              self.current_motion.set(tr[0])
+              self.running = t + tr[1]
+            else:
+              self.current_motion.set(self.motions['TaiChi'])
+              self.running = t + 10.0
+              print(t, 'TaiChi')
             # '''
 
 
